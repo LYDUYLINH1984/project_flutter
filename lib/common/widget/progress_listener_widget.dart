@@ -26,9 +26,10 @@ class _ProgressListenerWidgetState<T> extends State<ProgressListenerWidget> {
     super.didChangeDependencies();
 
     var bloc = context.read<T>() as BaseBloc;
-    bloc.progressStream.listen((event) {
-      widget.callback(event);
-    },
+    bloc.progressStream.listen(
+      (event) {
+        widget.callback(event);
+      },
     );
   }
 
@@ -42,7 +43,6 @@ class _ProgressListenerWidgetState<T> extends State<ProgressListenerWidget> {
         },
         child: Container(
           child: widget.child,
-        )
-    );
+        ));
   }
 }
