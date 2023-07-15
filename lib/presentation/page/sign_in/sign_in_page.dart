@@ -29,15 +29,7 @@ class SignUpContainer extends StatefulWidget {
 }
 
 class _SignUpContainerState extends State<SignUpContainer> {
-  
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    AuthenticationRepository repository = AuthenticationRepository();
-    repository.setApiRequest(ApiRequest());
-    
-    repository.signInService("flutte2r2504@gmail.com", "123456789");
-  }
+
   
   @override
   Widget build(BuildContext context) {
