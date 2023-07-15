@@ -1,5 +1,5 @@
 class AppResponse<T> {
-  String? result;
+  int? result;
   T? data;
   String? message;
 
