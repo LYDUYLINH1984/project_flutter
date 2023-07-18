@@ -31,7 +31,7 @@ class SignInBloc extends BaseBloc {
           await _repository?.signInService(event.email, event.password);
       UserValueObject userValueObject =
           UserValueObjectParser.parseFromUserDTO(userDTO);
-      messageSink.add("Login successfull");
+      messageSink.add("Login successful");
     } catch (e) {
       messageSink.add(e.toString());
     }

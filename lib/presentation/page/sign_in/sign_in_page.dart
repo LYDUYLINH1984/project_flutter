@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_app_sale_25042023/common/app_constants.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_widget.dart';
+import 'package:flutter_app_sale_25042023/common/widget/loading_widget.dart';
 import 'package:flutter_app_sale_25042023/data/api/api_request.dart';
 import 'package:flutter_app_sale_25042023/data/repository/authentication_repository.dart';
+import 'package:flutter_app_sale_25042023/presentation/page/sign_in/bloc/sign_in_bloc.dart';
+import 'package:flutter_app_sale_25042023/presentation/page/sign_in/bloc/sign_in_event.dart';
 import 'package:flutter_app_sale_25042023/utils/dimension_utils.dart';
 import 'package:flutter_app_sale_25042023/utils/message_utils.dart';
+import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -12,7 +17,21 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageContainer(
-      providers: [],
+      providers: [
+        Provider(create: (context) => ApiRequest()),
+        ProxyProvider<ApiRequest, AuthenticationRepository>(
+            create: (context) => AuthenticationRepository(),
+            update: (context, request, repository) {
+              repository?.setApiRequest(request);
+              return repository ??= AuthenticationRepository();
+            }),
+        ProxyProvider<AuthenticationRepository, SignInBloc>(
+            create: (context) => SignInBloc(),
+            update: (context, repository, bloc) {
+              bloc?.setAuthenticationRepository(repository);
+              return bloc ??= SignInBloc();
+            })
+      ],
       appBar: AppBar(
         title: const Text("Sign up"),
       ),
@@ -30,12 +49,37 @@ class SignUpContainer extends StatefulWidget {
 
 class _SignUpContainerState extends State<SignUpContainer> {
 
-  
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  SignInBloc? _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _bloc?.messageStream.listen((event) {
+        MessageUtils.showMessage(context, "Alert!!", event.toString());
+      });
+    });
+  }
+
+  void clickSignIn(String email, String password) {
+    if (email.isEmpty || password.isEmpty) {
+      _bloc?.messageSink.add("Input is not empty");
+      return;
+    }
+    _bloc?.executeSignIn(SignInEvent(email: email, password: password));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: SafeArea(
+      child: Stack(
+        children: [
+          SafeArea(
             child: Container(
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(builder: (context, constraint) {
@@ -48,8 +92,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
                           children: [
                             Expanded(
                                 flex: 2,
-                                child:
-                                Image.asset(AppConstants.IMAGE_BANNER_ASSETS)),
+                                child: Image.asset(AppConstants.IMAGE_BANNER_ASSETS)),
                             Expanded(
                               flex: 4,
                               child: Container(
@@ -59,29 +102,34 @@ class _SignUpContainerState extends State<SignUpContainer> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: DimensionUtils
-                                              .paddingHeightDivideNumber(context)),
-                                      child: _buildEmailTextField(),
+                                          top: DimensionUtils.paddingHeightDivideNumber(
+                                              context)),
+                                      child: _buildEmailTextField(emailController),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: DimensionUtils
-                                              .paddingHeightDivideNumber(context)),
-                                      child: _buildPasswordTextField(),
+                                          top: DimensionUtils.paddingHeightDivideNumber(
+                                              context)),
+                                      child: _buildPasswordTextField(passwordController),
                                     ),
-                                    _buildButtonSignIn(),
+                                    _buildButtonSignIn(() {
+                                      clickSignIn(emailController.text, passwordController.text);
+                                    }),
                                   ],
                                 ),
                               ),
                             ),
                             Expanded(child: _buildTextSignUp())
                           ],
-                        )
-                    ),
+                        )),
                   ),
                 );
               }),
-            )),
+            ),
+          ),
+          LoadingWidget(bloc: _bloc)
+        ]
+      )
     );
   }
 
@@ -103,11 +151,12 @@ class _SignUpContainerState extends State<SignUpContainer> {
         ));
   }
 
-  Widget _buildEmailTextField() {
+  Widget _buildEmailTextField(TextEditingController controller) {
     return Container(
       margin: EdgeInsets.only(left: 10, right: 10),
       child: TextField(
         maxLines: 1,
+        controller: controller,
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -130,12 +179,13 @@ class _SignUpContainerState extends State<SignUpContainer> {
     );
   }
 
-  Widget _buildPasswordTextField() {
+  Widget _buildPasswordTextField(TextEditingController controller) {
     return Container(
       margin: EdgeInsets.only(left: 10, right: 10),
       child: TextField(
         maxLines: 1,
         obscureText: true,
+        controller: controller,
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
@@ -158,7 +208,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
     );
   }
 
-  Widget _buildButtonSignIn() {
+  Widget _buildButtonSignIn(Function() eventSignIn) {
     return Container(
         margin: EdgeInsets.only(top: 20),
         child: ElevatedButtonTheme(
@@ -177,7 +227,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
                   const EdgeInsets.symmetric(vertical: 5, horizontal: 100)),
             )),
             child: ElevatedButton(
-              onPressed: () {  },
+              onPressed: eventSignIn,
               child: const Text("Login",
                   style: TextStyle(fontSize: 18, color: Colors.white)),
             )));
