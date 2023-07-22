@@ -129,9 +129,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
                                 emailController.text = email;
                                 passwordController.text = password;
                                 _bloc?.messageSink.add(message);
-                              } catch (e) {
-                                _bloc?.messageSink.add(e.toString());
-                              }
+                              } catch (e) { }
                             }))
                           ],
                         )),
