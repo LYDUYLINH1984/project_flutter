@@ -5,6 +5,7 @@ class UserDTO {
   num? userGroup;
   String? registerDate;
   String? token;
+  String? address;
 
   UserDTO.fromJson(Map<String, dynamic> json) {
     email = json["email"];
@@ -13,5 +14,6 @@ class UserDTO {
     userGroup = json["userGroup"];
     registerDate = json["registerDate"];
     token = json["token"];
+    address = json["address"];
   }
 }

@@ -119,7 +119,18 @@ class _SignUpContainerState extends State<SignUpContainer> {
                                 ),
                               ),
                             ),
-                            Expanded(child: _buildTextSignUp())
+                            Expanded(child: _buildTextSignUp(() async {
+                              try {
+                                Map mapData = await Navigator.pushNamed(context, AppConstants.SIGN_UP_ROUTE_NAME) as Map;
+                                String email = mapData["email"];
+                                String password = mapData["password"];
+                                String message = mapData["message"];
+
+                                emailController.text = email;
+                                passwordController.text = password;
+                                _bloc?.messageSink.add(message);
+                              } catch (e) { }
+                            }))
                           ],
                         )),
                   ),
@@ -133,7 +144,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
     );
   }
 
-  Widget _buildTextSignUp() {
+  Widget _buildTextSignUp(Function() onClickSignUp) {
     return Container(
         margin: const EdgeInsets.only(left: 10, right: 10),
         child: Row(
@@ -142,7 +153,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
           children: [
             const Text("Don't have an account!"),
             InkWell(
-              onTap: () {},
+              onTap: onClickSignUp,
               child: const Text("Sign Up",
                   style: TextStyle(
                       color: Colors.red, decoration: TextDecoration.underline)),
@@ -231,5 +242,11 @@ class _SignUpContainerState extends State<SignUpContainer> {
               child: const Text("Login",
                   style: TextStyle(fontSize: 18, color: Colors.white)),
             )));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc?.dispose();
   }
 }

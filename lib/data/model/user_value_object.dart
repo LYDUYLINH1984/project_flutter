@@ -3,5 +3,6 @@ class UserValueObject {
   String name = "";
   String phone = "";
   String token = "";
+  String address = "";
 }
 
