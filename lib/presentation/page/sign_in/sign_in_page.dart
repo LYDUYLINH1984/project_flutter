@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_app_sale_25042023/common/app_constants.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_widget.dart';
 import 'package:flutter_app_sale_25042023/common/widget/loading_widget.dart';
+import 'package:flutter_app_sale_25042023/common/widget/progress_listener_widget.dart';
 import 'package:flutter_app_sale_25042023/data/api/api_request.dart';
 import 'package:flutter_app_sale_25042023/data/repository/authentication_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/sign_in/bloc/sign_in_bloc.dart';
@@ -33,7 +34,7 @@ class SignInPage extends StatelessWidget {
             })
       ],
       appBar: AppBar(
-        title: const Text("Sign up"),
+        title: const Text("Sign in"),
       ),
       child: SignUpContainer(),
     );
@@ -138,7 +139,17 @@ class _SignUpContainerState extends State<SignUpContainer> {
               }),
             ),
           ),
-          LoadingWidget(bloc: _bloc)
+          LoadingWidget(bloc: _bloc),
+          ProgressListenerWidget<SignInBloc>(
+            callback: (event) {
+              switch(event.runtimeType) {
+                case SignInSuccessEvent:
+                  Navigator.pushReplacementNamed(context, AppConstants.PRODUCT_ROUTE_NAME);
+                  break;
+              }
+            },
+            child: Container(),
+          )
         ]
       )
     );

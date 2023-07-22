@@ -3,9 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppSharePreference {
   static SharedPreferences? _prefs;
 
-  static Future<SharedPreferences> init() async {
-    _prefs ??= await SharedPreferences.getInstance();
-    return _prefs!;
+  static void init() {
+    SharedPreferences.getInstance().then((value) {
+      _prefs = value;
+    });
   }
 
   static String getString(String key) => _prefs?.getString(key) ?? "";
