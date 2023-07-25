@@ -31,4 +31,8 @@ class ApiRequest {
       "address": address
     });
   }
+
+  Future fetchProducts() {
+    return _dio.get(AppConstants.PRODUCTS_URL);
+  }
 }
