@@ -63,6 +63,14 @@ class _SignUpContainerState extends State<SignUpContainer> {
       _bloc?.messageStream.listen((event) {
         MessageUtils.showMessage(context, "Alert!!", event.toString());
       });
+
+      _bloc?.progressStream.listen((event) {
+        switch(event.runtimeType) {
+          case SignInSuccessEvent:
+            Navigator.pushReplacementNamed(context, AppConstants.PRODUCT_ROUTE_NAME);
+            break;
+        }
+      });
     });
   }
 
@@ -140,16 +148,6 @@ class _SignUpContainerState extends State<SignUpContainer> {
             ),
           ),
           LoadingWidget(bloc: _bloc),
-          ProgressListenerWidget<SignInBloc>(
-            callback: (event) {
-              switch(event.runtimeType) {
-                case SignInSuccessEvent:
-                  Navigator.pushReplacementNamed(context, AppConstants.PRODUCT_ROUTE_NAME);
-                  break;
-              }
-            },
-            child: Container(),
-          )
         ]
       )
     );
