@@ -4,7 +4,9 @@ import 'package:flutter_app_sale_25042023/common/app_constants.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_widget.dart';
 import 'package:flutter_app_sale_25042023/common/widget/loading_widget.dart';
 import 'package:flutter_app_sale_25042023/data/api/api_request.dart';
+import 'package:flutter_app_sale_25042023/data/model/cart_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/model/product_value_object.dart';
+import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/product/bloc/product_bloc.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/product/bloc/product_event.dart';
@@ -28,15 +30,34 @@ class ProductPage extends StatelessWidget {
               margin: EdgeInsets.only(right: 10, top: 10),
               child: Icon(Icons.history)),
           SizedBox(width: 10),
-          Container(
-            margin: EdgeInsets.only(right: 10, top: 10),
-            child: Badge(
-              badgeContent: Text(
-                "0",
-                style: const TextStyle(color: Colors.white),
-              ),
-              child: Icon(Icons.shopping_cart_outlined),
-            ),
+          Consumer<ProductBloc>(
+            builder: (context, bloc, child){
+              return StreamBuilder<CartValueObject>(
+                  initialData: null,
+                  stream: bloc.cartStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError || snapshot.data == null || snapshot.data?.listProduct.isEmpty == true) {
+                      return InkWell(
+                        child: Container(
+                            margin: EdgeInsets.only(right: 10, top: 10),
+                            child: Icon(Icons.shopping_cart_outlined)
+                        ),
+                      );
+                    }
+                    int count = 0;
+                    snapshot.data?.listProduct.forEach((element) {
+                      count += element.quantity.toInt();
+                    });
+                    return Container(
+                      margin: EdgeInsets.only(right: 10, top: 10),
+                      child: Badge(
+                        badgeContent: Text(count.toString(), style: const TextStyle(color: Colors.white),),
+                        child: Icon(Icons.shopping_cart_outlined),
+                      ),
+                    );
+                  }
+              );
+            },
           ),
           SizedBox(width: 10),
         ],
@@ -51,11 +72,20 @@ class ProductPage extends StatelessWidget {
             return repository;
           },
         ),
-        ProxyProvider<ProductRepository, ProductBloc>(
+        ProxyProvider<ApiRequest, CartRepository>(
+          create: (context) => CartRepository(),
+          update: (_, request, repository) {
+            repository ??= CartRepository();
+            repository.setApiRequest(request);
+            return repository;
+          },
+        ),
+        ProxyProvider2<ProductRepository, CartRepository, ProductBloc>(
           create: (context) => ProductBloc(),
-          update: (_, productRepo, bloc) {
+          update: (_, productRepo, cartRepo, bloc) {
             bloc ??= ProductBloc();
             bloc.setProductRepository(productRepo);
+            bloc.setCartRepository(cartRepo);
             return bloc;
           },
         )
@@ -80,6 +110,7 @@ class _ProductContainerState extends State<ProductContainer> {
     super.initState();
     _bloc = context.read();
     _bloc?.eventSink.add(FetchProductsEvent());
+    _bloc?.eventSink.add(FetchCartEvent());
   }
 
   @override
@@ -99,7 +130,9 @@ class _ProductContainerState extends State<ProductContainer> {
                 return ListView.builder(
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return _buildItemFood(snapshot.data?[index]);
+                      return _buildItemFood(snapshot.data?[index], () {
+                        _bloc?.eventSink.add(AddCartEvent(idProduct: snapshot.data?[index].id ?? ""));
+                      });
                     }
                 );
               }
@@ -110,7 +143,7 @@ class _ProductContainerState extends State<ProductContainer> {
     );
   }
 
-  Widget _buildItemFood(ProductValueObject? product) {
+  Widget _buildItemFood(ProductValueObject? product, Function()? eventAddCart) {
     if (product == null) return Container();
     return SizedBox(
       height: 135,
@@ -147,7 +180,7 @@ class _ProductContainerState extends State<ProductContainer> {
                       Row(
                           children:[
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: eventAddCart,
                               style: ButtonStyle(
                                   backgroundColor:
                                   MaterialStateProperty.resolveWith((states) {

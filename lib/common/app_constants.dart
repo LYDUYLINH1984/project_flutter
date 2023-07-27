@@ -15,6 +15,8 @@ class AppConstants {
   static const String SIGN_IN_URL = "user/sign-in";
   static const String SIGN_UP_URL = "user/sign-up";
   static const String PRODUCTS_URL = "product";
+  static const String CART_URL = "cart";
+  static const String ADD_CART_URL = "cart/add";
 
   // Key
   static const KEY_TOKEN = "token";
