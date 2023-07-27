@@ -84,29 +84,29 @@ class _ProductContainerState extends State<ProductContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
-          children: [
-            StreamBuilder<List<ProductValueObject>>(
-                initialData: const [],
-                stream: _bloc?.productStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError || snapshot.data?.isEmpty == true) {
-                    return Container(
-                      child: Center(child: Text("Data empty")),
-                    );
-                  }
-                  return ListView.builder(
-                      itemCount: snapshot.data?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return _buildItemFood(snapshot.data?[index]);
-                      }
+    return Stack(
+      children: [
+        SafeArea(
+          child: StreamBuilder<List<ProductValueObject>>(
+              initialData: const [],
+              stream: _bloc?.productStream(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError || snapshot.data?.isEmpty == true) {
+                  return Container(
+                    child: Center(child: Text("Data empty")),
                   );
                 }
-            ),
-            LoadingWidget(bloc: _bloc),
-          ],
-        )
+                return ListView.builder(
+                    itemCount: snapshot.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return _buildItemFood(snapshot.data?[index]);
+                    }
+                );
+              }
+          ),
+        ),
+        LoadingWidget(bloc: _bloc),
+      ],
     );
   }
 
