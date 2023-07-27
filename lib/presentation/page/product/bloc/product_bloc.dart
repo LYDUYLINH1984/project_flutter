@@ -2,21 +2,31 @@ import 'dart:async';
 
 import 'package:flutter_app_sale_25042023/common/base/base_bloc.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_event.dart';
+import 'package:flutter_app_sale_25042023/data/model/cart_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/model/product_value_object.dart';
+import 'package:flutter_app_sale_25042023/data/parser/cart_value_object_parser.dart';
 import 'package:flutter_app_sale_25042023/data/parser/product_value_object_parser.dart';
+import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/product/bloc/product_event.dart';
 
 class ProductBloc extends BaseBloc {
 
   final StreamController<List<ProductValueObject>> _productController = StreamController();
+  final StreamController<CartValueObject> _cartController = StreamController();
 
   Stream<List<ProductValueObject>> productStream() => _productController.stream;
+  Stream<CartValueObject> cartStream() => _cartController.stream;
 
-  ProductRepository? _repository;
+  ProductRepository? _productRepository;
+  CartRepository? _cartRepository;
 
   void setProductRepository(ProductRepository repository) {
-    _repository = repository;
+    _productRepository = repository;
+  }
+
+  void setCartRepository(CartRepository repository) {
+    _cartRepository = repository;
   }
 
   @override
@@ -25,13 +35,16 @@ class ProductBloc extends BaseBloc {
       case FetchProductsEvent:
         executeGetProducts();
         break;
+      case FetchCartEvent:
+        executeGetCart();
+        break;
     }
   }
 
   void executeGetProducts() async {
     loadingSink.add(true);
     try {
-      var listProductDTO = await _repository?.getProductsService();
+      var listProductDTO = await _productRepository?.getProductsService();
       var listProductValueObject = listProductDTO?.map((productDTO) {
         return ProductValueObjectParser.parseFromProductDTO(productDTO);
       }).toList();
@@ -42,7 +55,21 @@ class ProductBloc extends BaseBloc {
 
     } catch (e) {
       messageSink.add(e.toString());
+    } finally {
+      loadingSink.add(false);
     }
-    loadingSink.add(false);
+  }
+
+  void executeGetCart() async {
+    loadingSink.add(true);
+    try {
+      var cartDTO = await _cartRepository?.getCartService();
+      var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
+      _cartController.sink.add(cartValueObject);
+    } catch (e) {
+      messageSink.add(e.toString());
+    } finally {
+      loadingSink.add(false);
+    }
   }
 }
