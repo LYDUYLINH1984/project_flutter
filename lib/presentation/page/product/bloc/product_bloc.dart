@@ -38,6 +38,9 @@ class ProductBloc extends BaseBloc {
       case FetchCartEvent:
         executeGetCart();
         break;
+      case AddCartEvent:
+        executeAddCart(event as AddCartEvent);
+        break;
     }
   }
 
@@ -64,6 +67,19 @@ class ProductBloc extends BaseBloc {
     loadingSink.add(true);
     try {
       var cartDTO = await _cartRepository?.getCartService();
+      var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
+      _cartController.sink.add(cartValueObject);
+    } catch (e) {
+      messageSink.add(e.toString());
+    } finally {
+      loadingSink.add(false);
+    }
+  }
+
+  void executeAddCart(AddCartEvent event) async {
+    loadingSink.add(true);
+    try {
+      var cartDTO = await _cartRepository?.addCartService(event.idProduct);
       var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
       _cartController.sink.add(cartValueObject);
     } catch (e) {

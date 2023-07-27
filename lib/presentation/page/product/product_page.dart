@@ -130,7 +130,9 @@ class _ProductContainerState extends State<ProductContainer> {
                 return ListView.builder(
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return _buildItemFood(snapshot.data?[index]);
+                      return _buildItemFood(snapshot.data?[index], () {
+                        _bloc?.eventSink.add(AddCartEvent(idProduct: snapshot.data?[index].id ?? ""));
+                      });
                     }
                 );
               }
@@ -141,7 +143,7 @@ class _ProductContainerState extends State<ProductContainer> {
     );
   }
 
-  Widget _buildItemFood(ProductValueObject? product) {
+  Widget _buildItemFood(ProductValueObject? product, Function()? eventAddCart) {
     if (product == null) return Container();
     return SizedBox(
       height: 135,
@@ -178,7 +180,7 @@ class _ProductContainerState extends State<ProductContainer> {
                       Row(
                           children:[
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: eventAddCart,
                               style: ButtonStyle(
                                   backgroundColor:
                                   MaterialStateProperty.resolveWith((states) {
