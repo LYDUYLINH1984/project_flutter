@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       routes: {
         AppConstants.SIGN_IN_ROUTE_NAME: (context) => SignInPage(),
         AppConstants.SIGN_UP_ROUTE_NAME: (context) => SignUpPage(),
