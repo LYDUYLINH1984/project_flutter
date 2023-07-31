@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter_app_sale_25042023/common/app_constants.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_widget.dart';
 import 'package:flutter_app_sale_25042023/common/widget/loading_widget.dart';
@@ -50,7 +50,7 @@ class ProductPage extends StatelessWidget {
                     });
                     return Container(
                       margin: EdgeInsets.only(right: 10, top: 10),
-                      child: Badge(
+                      child: badges.Badge(
                         badgeContent: Text(count.toString(), style: const TextStyle(color: Colors.white),),
                         child: Icon(Icons.shopping_cart_outlined),
                       ),
