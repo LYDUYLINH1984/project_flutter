@@ -45,4 +45,19 @@ class ApiRequest {
       "id_product" : idProduct
     });
   }
+
+  Future updateCart(String idProduct, String idCart, int quantity ) {
+    return _dio.post(AppConstants.UPDATE_CART_URL, data: {
+      "id_product" : idProduct,
+      "id_cart" : idCart,
+      "quantity" : quantity
+    });
+  }
+
+  Future cartConform(String idCart, bool status) {
+    return _dio.post(AppConstants.CONFORM_CART_URL, data: {
+      "id_cart" : idCart,
+      "status": status
+    });
+  }
 }

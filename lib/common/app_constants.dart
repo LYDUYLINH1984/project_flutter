@@ -17,6 +17,9 @@ class AppConstants {
   static const String PRODUCTS_URL = "product";
   static const String CART_URL = "cart";
   static const String ADD_CART_URL = "cart/add";
+  static const String UPDATE_CART_URL = "cart/update";
+  static const String CONFORM_CART_URL = "cart/conform";
+  static const String OTHER_CART_HISTORY_URL = "order/history";
 
   // Key
   static const KEY_TOKEN = "token";
