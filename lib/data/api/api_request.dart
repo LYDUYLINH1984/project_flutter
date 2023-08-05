@@ -39,6 +39,10 @@ class ApiRequest {
   Future fetchCart() {
     return _dio.get(AppConstants.CART_URL);
   }
+  
+  Future fetchOrder(){
+    return _dio.get(AppConstants.OTHER_CART_HISTORY_URL);
+  }
 
   Future addCart(String idProduct) {
     return _dio.post(AppConstants.ADD_CART_URL, data: {
