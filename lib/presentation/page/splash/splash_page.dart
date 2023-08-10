@@ -20,7 +20,7 @@ class SplashPage extends StatelessWidget {
                 animate: true,
                 onLoaded: (composition) {
                   Future.delayed(const Duration(seconds: 2), () {
-                    String token = '';//AppSharePreference.getString(AppConstants.KEY_TOKEN);
+                    String token = AppSharePreference.getString(AppConstants.KEY_TOKEN);
                     if (token.isNotEmpty) {
                       Navigator.pushReplacementNamed(context, AppConstants.PRODUCT_ROUTE_NAME);
                     } else {
