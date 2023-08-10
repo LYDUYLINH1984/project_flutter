@@ -49,12 +49,8 @@ class ApiRequest {
       "id_product" : idProduct
     });
   }
-
-<<<<<<< HEAD
-  Future updateCart(String idProduct, String idCart, int quantity ) {
-=======
+  
   Future updateCart(String idCart, String idProduct, num quantity ) {
->>>>>>> linh_project_flutter
     return _dio.post(AppConstants.UPDATE_CART_URL, data: {
       "id_product" : idProduct,
       "id_cart" : idCart,
@@ -68,8 +64,4 @@ class ApiRequest {
       "status": status
     });
   }
-<<<<<<< HEAD
-  
-=======
->>>>>>> linh_project_flutter
 }

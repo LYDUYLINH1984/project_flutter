@@ -19,12 +19,8 @@ class AppConstants {
   static const String ADD_CART_URL = "cart/add";
   static const String UPDATE_CART_URL = "cart/update";
   static const String CONFORM_CART_URL = "cart/conform";
-<<<<<<< HEAD
   static const String ORDER_HISTORY_URL = "order/history";
-=======
   static const String OTHER_CART_HISTORY_URL = "order/history";
->>>>>>> linh_project_flutter
-
   // Key
   static const KEY_TOKEN = "token";
 }
