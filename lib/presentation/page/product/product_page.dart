@@ -24,7 +24,6 @@ class ProductPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.logout),
           onPressed: () {
-            const Text("Thêm vào giỏ", style: TextStyle(fontSize: 14));
           },
         ),
         actions: [
