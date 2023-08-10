@@ -39,14 +39,22 @@ class ApiRequest {
   Future fetchCart() {
     return _dio.get(AppConstants.CART_URL);
   }
-
+  
+  Future fetchOrder(){
+    return _dio.get(AppConstants.OTHER_CART_HISTORY_URL);
+  }
+  
   Future addCart(String idProduct) {
     return _dio.post(AppConstants.ADD_CART_URL, data: {
       "id_product" : idProduct
     });
   }
 
+<<<<<<< HEAD
   Future updateCart(String idProduct, String idCart, int quantity ) {
+=======
+  Future updateCart(String idCart, String idProduct, num quantity ) {
+>>>>>>> linh_project_flutter
     return _dio.post(AppConstants.UPDATE_CART_URL, data: {
       "id_product" : idProduct,
       "id_cart" : idCart,
@@ -60,5 +68,8 @@ class ApiRequest {
       "status": status
     });
   }
+<<<<<<< HEAD
   
+=======
+>>>>>>> linh_project_flutter
 }
