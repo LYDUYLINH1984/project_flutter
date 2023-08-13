@@ -5,4 +5,6 @@ class OrderHistoryValueObject{
   List<ProductValueObject> listProduct = List.empty();
   String idUser = "";
   num price = 0;
+  bool status = false;
+  DateTime dateCreated = DateTime.now();
 }

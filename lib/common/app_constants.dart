@@ -6,6 +6,8 @@ class AppConstants {
   static const String SIGN_UP_ROUTE_NAME = "/sign-up";
   static const String SPLASH_ROUTE_NAME = "/splash";
   static const String PRODUCT_ROUTE_NAME = "/product";
+  static const String ORDER_ROUTE_NAME = "/order";
+  static const String CART_ROUTE_NAME = "/cart";
 
   // Assets
   static const String IMAGE_BANNER_ASSETS = "assets/images/ic_food_express.png";

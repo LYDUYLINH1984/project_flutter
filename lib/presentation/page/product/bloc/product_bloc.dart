@@ -41,6 +41,20 @@ class ProductBloc extends BaseBloc {
       case AddCartEvent:
         executeAddCart(event as AddCartEvent);
         break;
+      case FetchOrderHistoryEvent:
+        executeGetOrderHistory(event as FetchOrderHistoryEvent);
+        break;
+    }
+  }
+
+  void executeGetOrderHistory(FetchOrderHistoryEvent event){
+    loadingSink.add(true);
+    try{
+      messageSink.add("Order History");
+    }catch(e){
+      messageSink.add(e.toString());
+    }finally{
+      loadingSink.add(false);
     }
   }
 
@@ -62,7 +76,7 @@ class ProductBloc extends BaseBloc {
       loadingSink.add(false);
     }
   }
-
+  
   void executeGetCart() async {
     loadingSink.add(true);
     try {

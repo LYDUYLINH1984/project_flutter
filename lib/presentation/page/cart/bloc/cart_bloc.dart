@@ -7,7 +7,6 @@ import 'package:flutter_app_sale_25042023/data/model/product_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/parser/cart_value_object_parser.dart';
 import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
-import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/cart_bloc.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/cart_event.dart';
 
 class CartBloc extends BaseBloc{
@@ -24,6 +23,10 @@ class CartBloc extends BaseBloc{
     {
       _cartRepository = repository;
     }
+
+  void setProductRepository(ProductRepository repository) {
+    _productRepository = repository;
+  }
     
     @override
   void dispatch(BaseEvent event) {

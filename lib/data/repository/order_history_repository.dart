@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_app_sale_25042023/data/api/api_request.dart';
 import 'package:flutter_app_sale_25042023/data/api/app_response.dart';

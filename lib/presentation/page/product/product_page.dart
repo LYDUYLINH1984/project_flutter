@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_app_sale_25042023/common/app_constants.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_widget.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/product/bloc/product_bloc.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/product/bloc/product_event.dart';
+import 'package:flutter_app_sale_25042023/data/local/app_sharepreference.dart';
+import 'package:flutter_app_sale_25042023/utils/message_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -24,12 +27,26 @@ class ProductPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.logout),
           onPressed: () {
+            Navigator.pushNamed(context, AppConstants.SIGN_IN_ROUTE_NAME);
+            AppSharePreference.setString(
+                key: AppConstants.KEY_TOKEN,
+                value: ""
+            );
           },
         ),
         actions: [
           Container(
               margin: EdgeInsets.only(right: 10, top: 10),
-              child: Icon(Icons.history)),
+              child: IconButton(
+                icon: Icon(Icons.history),
+                onPressed: () {
+                  Navigator.pushNamed(context, AppConstants.ORDER_ROUTE_NAME);
+                  //Navigator.pushNamed(context, AppConstants.SIGN_IN_ROUTE_NAME);
+                  //MessageUtils.showMessage(context, "Alert!!", "You have not entered enough information");
+                },
+              )
+             //Icon(Icons.history),
+          ),
           SizedBox(width: 10),
           Consumer<ProductBloc>(
             builder: (context, bloc, child){
@@ -53,7 +70,14 @@ class ProductPage extends StatelessWidget {
                       margin: EdgeInsets.only(right: 10, top: 10),
                       child: badges.Badge(
                         badgeContent: Text(count.toString(), style: const TextStyle(color: Colors.white),),
-                        child: Icon(Icons.shopping_cart_outlined),
+                        child: IconButton(
+                          icon: Icon(Icons.shopping_cart_outlined),
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppConstants.SIGN_UP_ROUTE_NAME);
+                            //MessageUtils.showMessage(context, "Alert!!", "Cart Page");
+                          },
+                        )
+                        //Icon(Icons.shopping_cart_outlined),
                       ),
                     );
                   }
@@ -113,7 +137,7 @@ class _ProductContainerState extends State<ProductContainer> {
     _bloc?.eventSink.add(FetchProductsEvent());
     _bloc?.eventSink.add(FetchCartEvent());
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Stack(
