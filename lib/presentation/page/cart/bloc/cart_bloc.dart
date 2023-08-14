@@ -8,14 +8,20 @@ import 'package:flutter_app_sale_25042023/data/parser/cart_value_object_parser.d
 import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/cart_event.dart';
+import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/count_bloc.dart';
+import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/count_event.dart';
 
 class CartBloc extends BaseBloc{
   final StreamController<List<ProductValueObject>> _productController = StreamController();
   final StreamController<CartValueObject> _cartController = StreamController();
+  final StreamController<int> _countController = StreamController();
+  final StreamController<CountEvent> _eventController = StreamController();
+  int _total = 0;
 
   Stream<List<ProductValueObject>> productStream() => _productController.stream;
   Stream<CartValueObject> cartStream() => _cartController.stream;
-
+  Stream<int> getCountStream() => _countController.stream;
+  
   ProductRepository? _productRepository;
   CartRepository? _cartRepository;
   
@@ -27,16 +33,31 @@ class CartBloc extends BaseBloc{
   void setProductRepository(ProductRepository repository) {
     _productRepository = repository;
   }
+
+  CartBloc(){
+    _countController.sink.add(_total);
+    _eventController.stream.listen((event) {
+      if (event is IncreaseEvent) {
+        handleIncreaseEvent(event);
+      }
+      else if (event is DecreaseEvent){
+        handleDecreaseEvent(event);
+      }
+    });
+  }
     
     @override
   void dispatch(BaseEvent event) {
     // TODO: implement dispatch
       switch (event.runtimeType){
-        case FetchCartDetailEvent:
+        case FetchCartEvent:
           executeGetCarts();
           break;
         case UpdateCartEvent:
           executeUpdateCart(event as UpdateCartEvent);
+          break;
+        case ConfirmCartEvent:
+          executeConfirmCart(event as ConfirmCartEvent);
           break;
       }
   }
@@ -58,12 +79,41 @@ class CartBloc extends BaseBloc{
   {
     loadingSink.add(true);
     try{
-      //var cartDTO = await _cartRepository.addCartService(idProduct)
+      var cartDTO = await _cartRepository?.updateCartService(event.idCart, event.idProduct, event.quantity);
+      var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
+      _cartController.sink.add(cartValueObject);
     }catch(e){
       messageSink.add(e.toString());
     }finally{
         loadingSink.add(false);
     }
+  }
+  
+  void executeConfirmCart(ConfirmCartEvent event) async {
+      loadingSink.add(true);
+      try{
+        var cartDTO = await _cartRepository?.confirmCartService(event.idCart, event.status);
+        var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
+        _cartController.sink.add(cartValueObject);
+      }catch(e){
+        messageSink.add(e.toString());
+      }finally{
+        loadingSink.add(false);
+      }
+  }
+
+  void addEvent(CountEvent countEvent) {
+    _eventController.sink.add(countEvent);
+  }
+
+  void handleIncreaseEvent(IncreaseEvent event) {
+    _total += event.value;
+    _countController.sink.add(_total);
+  }
+
+  void handleDecreaseEvent(DecreaseEvent event) {
+    _total -= event.value;
+    _countController.sink.add(_total);
   }
   
 }

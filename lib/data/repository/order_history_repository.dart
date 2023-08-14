@@ -12,12 +12,13 @@ class OrderHistoryRepository {
     _apiRequest = apiRequest;
   }
   
-  Future<OrderDTO> getOrderHistoryService()  async {
-    Completer<OrderDTO> completer = Completer();
+  Future<List<OrderDTO>> getOrderHistoryService()  async {
+    Completer<List<OrderDTO>> completer = Completer();
     try {
       Response<dynamic> response = await _apiRequest?.fetchOrder();
-      AppResponse<OrderDTO> appResponse = AppResponse.fromJson(response.data, OrderDTO.fromJson);
+      AppResponse<List<OrderDTO>> appResponse = AppResponse.fromJson(response.data, OrderDTO.fromJson);
       completer.complete(appResponse.data);
+      print(appResponse.data);
     }on DioException catch(dioException){
       var message = ExceptionUtils.getErrorMessage(dioException.response?.data);
       completer.completeError(message);

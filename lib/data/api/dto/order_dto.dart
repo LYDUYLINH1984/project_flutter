@@ -12,7 +12,7 @@ class OrderDTO {
   OrderDTO.fromJson(Map<String, dynamic> json) 
   {
     id = json["_id"];
-    listProductDTO = ProductDTO.convertJson(json["products"]);
+    listProductDTO = ProductDTO.convertJson(json["products"]).toList();
     idUser = json["id_user"];
     price = json["price"];
     status = json["status"];

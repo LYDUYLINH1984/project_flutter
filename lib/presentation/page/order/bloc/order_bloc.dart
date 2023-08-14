@@ -32,17 +32,21 @@ class OrderBloc extends BaseBloc{
     // TODO: implement dispatch
     switch (event.runtimeType){
         case FetchOrderEvent:
-        executeGetOrderHistory();
-        break;
+            executeGetOrderHistory();
+            break;
     }
   }
-
   void executeGetOrderHistory() async {
     loadingSink.add(true);
     try {
       var listOrderDTO = await _orderHistoryRepository?.getOrderHistoryService();
-      var orderValueObject = OrderHistoryValueObjectParser.parseFromOrderDTO(listOrderDTO);
-      _orderController.sink.add(orderValueObject as List<OrderHistoryValueObject>);
+      var listOrderValueObject = listOrderDTO?.map((orderDTO){
+        return OrderHistoryValueObjectParser.parseFromOrderDTO(orderDTO);
+      }).toList();
+
+      if (listOrderValueObject != null) {
+        _orderController.sink.add(listOrderValueObject);
+      } 
     } catch (e) {
       messageSink.add(e.toString());
     } finally {
