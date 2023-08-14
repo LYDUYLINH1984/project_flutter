@@ -33,6 +33,14 @@ class OrderHistoryPage extends StatelessWidget {
             return repository;
           },
         ),
+        ProxyProvider<OrderHistoryRepository, OrderBloc>(
+          create: (context) => OrderBloc(),
+          update: (_, orderRepo, bloc) {
+            bloc ??= OrderBloc();
+            bloc.setOrderHistoryRepository(orderRepo);
+            return bloc;
+          },
+        )
       ],
       child: OrderHistoryContainer(),
     );
@@ -68,7 +76,7 @@ class _OrderHistoryContainerState extends State<OrderHistoryContainer> {
           initialData: const [],
           stream: _bloc?.orderStream(),
           builder: (context, snapshot) {
-            print(context);
+            print(snapshot);
             if (snapshot.hasError || snapshot.data?.isEmpty == true) {
               return Container(
                 child: Center(child: Text("Data empty")),
@@ -88,6 +96,7 @@ class _OrderHistoryContainerState extends State<OrderHistoryContainer> {
   }
 
   Widget _buildItemFood(OrderHistoryValueObject? orderHistory) {
+    //print(orderHistory.toString());
     if (orderHistory == null) return Container();
     return SizedBox(
       height: 135,
@@ -107,11 +116,15 @@ class _OrderHistoryContainerState extends State<OrderHistoryContainer> {
                   children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
-                    child: Text(orderHistory.dateCreated.toString(),
+                    child: Text(orderHistory.id.toString(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 16)),
-                  )
+                  ),
+                    Text(
+                        "Giá : ${NumberFormat("#,###", "en_US")
+                            .format(orderHistory.price)} đ",
+                        style: const TextStyle(fontSize: 12)),
                   ],
                 )
               ),
@@ -122,32 +135,5 @@ class _OrderHistoryContainerState extends State<OrderHistoryContainer> {
       ),
     );
   }
-  
-  
-  
-  
-  
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return  ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return Card(
-          child: ListTile(
-            title: Text("Abc"),
-            leading: Icon(Icons.add_call, color: Colors.blue),
-            trailing: InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( "Click vào trailing")));
-                },
-                child: Icon(Icons.add)
-            ),
-          ),
-        );
-      },
-    );
-  }
-   */
 }
 

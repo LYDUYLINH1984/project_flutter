@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_app_sale_25042023/common/base/base_bloc.dart';
 import 'package:flutter_app_sale_25042023/common/base/base_event.dart';
+import 'package:flutter_app_sale_25042023/data/api/dto/cart_dto.dart';
 import 'package:flutter_app_sale_25042023/data/model/cart_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/model/product_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/parser/cart_value_object_parser.dart';
@@ -81,7 +82,7 @@ class ProductBloc extends BaseBloc {
     loadingSink.add(true);
     try {
       var cartDTO = await _cartRepository?.getCartService();
-      var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO);
+      var cartValueObject = CartValueObjectParser.parseFromCartDTO(cartDTO as CartDTO?);
       _cartController.sink.add(cartValueObject);
     } catch (e) {
       messageSink.add(e.toString());

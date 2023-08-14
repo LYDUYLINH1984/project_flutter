@@ -73,7 +73,7 @@ class ProductPage extends StatelessWidget {
                         child: IconButton(
                           icon: Icon(Icons.shopping_cart_outlined),
                           onPressed: () {
-                            Navigator.pushNamed(context, AppConstants.SIGN_UP_ROUTE_NAME);
+                            Navigator.pushNamed(context, AppConstants.CART_ROUTE_NAME);
                             //MessageUtils.showMessage(context, "Alert!!", "Cart Page");
                           },
                         )
@@ -225,7 +225,8 @@ class _ProductContainerState extends State<ProductContainer> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: (){
+                                  
                                 },
                                 style: ButtonStyle(
                                     backgroundColor:
