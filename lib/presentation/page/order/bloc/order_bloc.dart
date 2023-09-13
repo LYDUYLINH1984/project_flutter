@@ -4,6 +4,7 @@ import 'package:flutter_app_sale_25042023/common/base/base_event.dart';
 import 'package:flutter_app_sale_25042023/data/model/order_history_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/model/product_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/parser/order_history_value_object_parser.dart';
+import 'package:flutter_app_sale_25042023/data/parser/product_value_object_parser.dart';
 import 'package:flutter_app_sale_25042023/data/repository/order_history_repository.dart';
 import 'package:flutter_app_sale_25042023/data/repository/product_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/order/bloc/order_event.dart';
@@ -34,6 +35,9 @@ class OrderBloc extends BaseBloc{
         case FetchOrderEvent:
             executeGetOrderHistory();
             break;
+      case FetchProductEvent:
+        executeGetProducts();
+        break;    
     }
   }
   void executeGetOrderHistory() async {
@@ -47,6 +51,25 @@ class OrderBloc extends BaseBloc{
       if (listOrderValueObject != null) {
         _orderController.sink.add(listOrderValueObject);
       } 
+    } catch (e) {
+      messageSink.add(e.toString());
+    } finally {
+      loadingSink.add(false);
+    }
+  }
+
+  void executeGetProducts() async {
+    loadingSink.add(true);
+    try {
+      var listProductDTO = await _productRepository?.getProductsService();
+      var listProductValueObject = listProductDTO?.map((productDTO) {
+        return ProductValueObjectParser.parseFromProductDTO(productDTO);
+      }).toList();
+
+      if (listProductValueObject != null) {
+        _productController.sink.add(listProductValueObject);
+      }
+
     } catch (e) {
       messageSink.add(e.toString());
     } finally {

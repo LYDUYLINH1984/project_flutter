@@ -10,7 +10,7 @@ class OrderHistoryValueObjectParser {
     orderHistoryValueObject.idUser = orderDTO.idUser ?? "";
     orderHistoryValueObject.listProduct = orderDTO.listProductDTO?.map((e) {
       return ProductValueObjectParser.parseFromProductDTO(e);
-    }).toList() ?? List.empty(growable: true);
+    }).toList() ?? List.empty();
     orderHistoryValueObject.price = orderDTO.price ?? 0;
     orderHistoryValueObject.status = orderDTO.status ?? false;
     orderHistoryValueObject.dateCreated = orderDTO.dateCreate ?? DateTime.now();

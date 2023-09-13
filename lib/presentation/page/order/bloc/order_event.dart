@@ -6,6 +6,12 @@ class FetchOrderEvent extends BaseEvent {
   List<Object?> get props => [];
 }
 
+class FetchProductEvent extends BaseEvent {
+
+  @override
+  List<Object?> get props => [];
+}
+
 class FetchOrderDetailsEvent extends BaseEvent {
   String idOrder;
 

@@ -41,7 +41,7 @@ class ApiRequest {
   }
   
   Future fetchOrder(){
-    return _dio.get(AppConstants.ORDER_HISTORY_URL);
+    return _dio.post(AppConstants.ORDER_HISTORY_URL);
   }
   
   Future addCart(String idProduct) {

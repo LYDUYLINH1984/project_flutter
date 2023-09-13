@@ -71,25 +71,27 @@ class _OrderHistoryContainerState extends State<OrderHistoryContainer> {
     return Stack(
       children: [
      LoadingWidget(bloc: _bloc),
-      SafeArea(
-        child: StreamBuilder<List<OrderHistoryValueObject>>(
-          initialData: const [],
-          stream: _bloc?.orderStream(),
-          builder: (context, snapshot) {
-            print(snapshot);
-            if (snapshot.hasError || snapshot.data?.isEmpty == true) {
-              return Container(
-                child: Center(child: Text("Data empty")),
-              );
-            }
-            return ListView.builder(
-                itemCount: snapshot.data?.length ?? 0,
-                itemBuilder: (context, index) {
-                  return _buildItemFood(snapshot.data?[index]);
+      Consumer<OrderBloc>(
+          builder: (context, bloc, child){
+            return  StreamBuilder<List<OrderHistoryValueObject>>(
+                initialData: const [],
+                stream: _bloc?.orderStream(),
+                builder: (context, snapshot) {
+                  print(snapshot);
+                  if (snapshot.hasError || snapshot.data?.isEmpty == true) {
+                    return Container(
+                      child: Center(child: Text("Data empty")),
+                    );
+                  }
+                  return ListView.builder(
+                      itemCount: snapshot.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return _buildItemFood(snapshot.data?[index]);
+                      }
+                  );
                 }
             );
-          }
-        ),
+        },
       ),
       ],
     );

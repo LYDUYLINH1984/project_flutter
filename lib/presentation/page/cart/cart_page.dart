@@ -5,6 +5,7 @@ import 'package:flutter_app_sale_25042023/data/model/cart_value_object.dart';
 import 'package:flutter_app_sale_25042023/data/repository/cart_repository.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/cart_bloc.dart';
 import 'package:flutter_app_sale_25042023/presentation/page/cart/bloc/cart_event.dart';
+import 'package:flutter_app_sale_25042023/presentation/page/order/bloc/order_bloc.dart';
 import 'package:flutter_app_sale_25042023/utils/message_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class CartPage extends StatelessWidget {
     return PageContainer(
     appBar: AppBar(
       title: const Text("Cart Information"),
-    ), 
+    ),
       providers: [
         Provider(create: (context) => ApiRequest()),
         ProxyProvider<ApiRequest, CartRepository>(
@@ -55,6 +56,7 @@ class CartContainer extends StatefulWidget {
 
 class _CartContainerState extends State<CartContainer> {
   CartBloc? _bloc;
+  final TextEditingController quantityController = TextEditingController();
   
   @override
   void initState() {
@@ -63,10 +65,14 @@ class _CartContainerState extends State<CartContainer> {
     _bloc = context.read();
     _bloc?.eventSink.add(FetchCartEvent());
   }
+  
+  
+  
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
+      LoadingWidget(bloc: _bloc),
       SafeArea(
         child: StreamBuilder<CartValueObject>(
           initialData: null,
@@ -87,10 +93,10 @@ class _CartContainerState extends State<CartContainer> {
           },
         ),
       ),
-        LoadingWidget(bloc: _bloc),
       ],
     );
   }
+  
   Widget _buildCartItemFood(CartValueObject? cart){
     if (cart == null) return Container();
     return SizedBox(
@@ -116,7 +122,7 @@ class _CartContainerState extends State<CartContainer> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
-                                child: Text(cart.listProduct[1].name.toString(),
+                                child: Text(cart.listProduct[1].toString(),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(fontSize: 16)),
@@ -145,7 +151,7 @@ class _CartContainerState extends State<CartContainer> {
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(10))))),
                                       child:
-                                      const Text("+", style: TextStyle(fontSize: 14)),
+                                      const Text("-", style: TextStyle(fontSize: 14)),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5),
@@ -167,7 +173,7 @@ class _CartContainerState extends State<CartContainer> {
                                                     borderRadius: BorderRadius.all(
                                                         Radius.circular(10))))),
                                         child:
-                                        Text("-", style: const TextStyle(fontSize: 14)),
+                                        Text("+", style: const TextStyle(fontSize: 14)),
                                       ),
                                     ),
                                   ]
@@ -175,11 +181,45 @@ class _CartContainerState extends State<CartContainer> {
                             ],
                           )
                       )
-                  ),
+                  )
                 ]
             )
-        )
-        )
+          )
+        ),
     );
+  }
+
+  Widget _buildQuantityTextField(TextEditingController controller) {
+    return Container(
+      margin: EdgeInsets.only(left: 2, right: 2),
+      child: TextField(
+        maxLines: 1,
+        controller: controller,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          fillColor: Colors.black12,
+          filled: true,
+          hintText: "Quantity",
+          labelStyle: const TextStyle(color: Colors.blue),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: const BorderSide(width: 0, color: Colors.black12)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: const BorderSide(width: 0, color: Colors.black12)),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: const BorderSide(width: 0, color: Colors.black12)),
+        ),
+      ),
+    );
+  }
+  
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bloc?.dispose();
   }
 }
